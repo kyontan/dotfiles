@@ -1,0 +1,76 @@
+source ~/zsh.d/zshenv
+
+bindkey '^[[H' beginning-of-line
+bindkey '^[[F' end-of-line
+bindkey "^[[3~" delete-char
+
+precmd () {print -Pn "\e]2; %~/ \a"}
+preexec () {print -Pn "\e]2; %~/ \a"}
+
+# prompt
+#autoload -U colors
+#colors
+PROMPT='[%n@%m]# '
+RPROMPT='[%d]'
+
+# completion
+autoload -U compinit
+compinit
+setopt correct
+zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+setopt COMBINING_CHARS
+
+# history
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+setopt hist_ignore_dups
+setopt share_history
+setopt auto_pushd
+setopt pushd_ignore_dups
+
+setopt auto_cd
+setopt list_packed
+
+# alias
+alias ll='ls -lF'
+alias la='ls -A'
+alias l='ls -CF'
+# alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+alias vi='vim'
+alias -g G='| grep'
+alias -g L='| less'
+alias -g H='| head'
+alias -g T='| tail'
+alias -g S='| sort'
+alias -g W='| wc'
+alias -g X='| xargs'
+# alias tsp='tmux new-session \; split-window -h -d'
+# alias tvsp='tmux new-session \; split-window -d'
+
+# ------------------------------------------------------------------
+
+alias cc='/usr/bin/cc'
+
+alias nano='nano -k -w -i -S -T 2'
+
+alias huba="hub add -A && hub status"
+alias hubs="hub status"
+alias hubc="hub commit"
+alias hubp="hub push origin master"
+alias hubg="hub push gitlab master"
+alias hubl="hub log --oneline"
+
+alias javac='javac -J-Dfile.encoding=UTF-8'
+alias jar='jar -J-Dfile.encoding=UTF-8'
+
+alias cdc="cd ~/Code"
+alias cdd="cd ~/Downloads"
+
+alias p="peco"
+
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"
+
+GOPATH=(~/Code/go)
