@@ -68,9 +68,17 @@ alias jar='jar -J-Dfile.encoding=UTF-8'
 
 alias cdc="cd ~/Code"
 alias cdd="cd ~/Downloads"
+alias cds="cd ~/Documents/School"
 
 alias p="peco"
 
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"
 
 GOPATH=(~/Code/go)
+
+# colordiff
+if [[ -x `which cdiff` ]]; then
+	alias diff='cdiff -u'
+else
+	alias diff='diff -u'
+fi
