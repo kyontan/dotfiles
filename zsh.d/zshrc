@@ -4,6 +4,9 @@ bindkey '^[[H' beginning-of-line
 bindkey '^[[F' end-of-line
 bindkey "^[[3~" delete-char
 
+bindkey "\e[1~" beginning-of-line
+bindkey "\e[4~" end-of-line
+
 precmd () {print -Pn "\e]2; %~/ \a"}
 preexec () {print -Pn "\e]2; %~/ \a"}
 
@@ -72,7 +75,15 @@ alias cds="cd ~/Documents/School"
 
 alias p="peco"
 
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"
+alias be="bundle exec"
+alias bss="browser-sync start --server"
+alias bsc="browser-sync start --server --config bs-config.js"
+
+# Fix for tmux
+# brew install reattach-to-user-namespace
+alias subl='reattach-to-user-namespace subl'
+alias stree='reattach-to-user-namespace stree'
+alias open='reattach-to-user-namespace open'
 
 GOPATH=(~/Code/go)
 
@@ -82,3 +93,31 @@ if [[ -x `which colordiff` ]]; then
 else
 	alias diff='diff -u'
 fi
+
+source ~/.profile
+
+# peco find directory
+function peco-find() {
+  local current_buffer=$BUFFER
+  local search_root=""
+  local file_path=""
+
+  if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
+    search_root=`git rev-parse --show-toplevel`
+  else
+    search_root=`pwd`
+  fi
+  file_path="$(find ${search_root} -maxdepth 5 | peco)"
+  BUFFER="${current_buffer} ${file_path}"
+  CURSOR=$#BUFFER
+  zle clear-screen
+}
+zle -N peco-find
+
+# bind keys
+bindkey '^f' peco-find
+
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+
+# for zsh-completions
+fpath=($HOME/.zsh/completion $fpath)

@@ -10,14 +10,17 @@ typeset -U path
 path=(
 			/usr/texbin(N-/)
       ~/.rvm/gems/ruby-2.1.0/bin(N-/)
+      ~/bin(N-/)
+      ~/.node/bin(N-/)
       /usr/local/share/npm/bin(N-/)
       /usr/X11R6/bin(N-/)
       /opt/local/bin(N-/)
       /opt/local/sbin(N-/)
-      ~/bin(N-/)
+      /Applications/UpTeX.app/Contents/Resources/TEX/texbin
       /usr/local/bin(N-/)
       /usr/bin(N-/)
       /bin(N-/)
+      /usr/local/sbin(N-/)
       /usr/sbin(N-/)
       /sbin(N-/)
       )
@@ -57,3 +60,26 @@ fi
 ## -R: ANSIエスケープシーケンスのみ素通しする。
 ## 2012-09-04
 export LESS="-R"
+
+setopt combining_chars
+
+setopt IGNOREEOF
+
+WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
+
+alias grep="grep --color"
+
+cdf () {
+  target=`osascript -e 'tell application "Finder" to if (count of Finder windows) > 0 then get POSIX path of (target of front Finder window as text)'`
+  if [ "$target" != "" ]
+  then
+    cd "$target"
+  else
+    echo 'No Finder window found' >&2
+  fi
+}
+
+[[ -s "$HOME/bin/metasm" ]] && export RUBYLIB="$HOME/bin/metasm"
+
+# export RUBYGEMS_GEMDEPS="-"
+# export GEM_HOME="vendor/bundle"
