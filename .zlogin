@@ -1,6 +1,4 @@
 
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-
 if which tmux > /dev/null 2>&1; then
     if [ -z "$TMUX" ]; then
         tmux list-session >/dev/null 2>&1| wc -l| awk '{print $0}'| read count
@@ -45,3 +43,5 @@ if which tmux > /dev/null 2>&1; then
         fi
     fi
 fi
+
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*

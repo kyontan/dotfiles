@@ -10,6 +10,10 @@ bindkey "\e[4~" end-of-line
 precmd () {print -Pn "\e]2; %~/ \a"}
 preexec () {print -Pn "\e]2; %~/ \a"}
 
+# disable XON/XOFF flow control
+# (Prevent stopping terminal when sending C-s)
+stty -ixon
+
 # prompt
 #autoload -U colors
 #colors
@@ -22,6 +26,8 @@ compinit
 setopt correct
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 setopt COMBINING_CHARS
+
+zstyle ':completion:*:default' menu select=2
 
 # history
 HISTFILE=~/.zsh_history
@@ -84,6 +90,8 @@ alias bsc="browser-sync start --server --config bs-config.js"
 alias subl='reattach-to-user-namespace subl'
 alias stree='reattach-to-user-namespace stree'
 alias open='reattach-to-user-namespace open'
+alias vim='reattach-to-user-namespace vim'
+alias pbcopy='reattach-to-user-namespace pbcopy'
 
 GOPATH=(~/Code/go)
 
@@ -121,3 +129,12 @@ bindkey '^f' peco-find
 
 # for zsh-completions
 fpath=($HOME/.zsh/completion $fpath)
+
+function peco-history-selection() {
+    BUFFER=`history -n 1 | tail -r  | awk '!a[$0]++' | peco`
+    CURSOR=$#BUFFER
+    zle reset-prompt
+}
+
+zle -N peco-history-selection
+bindkey '^R' peco-history-selection

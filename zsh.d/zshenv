@@ -8,8 +8,10 @@ typeset -U path
 ##            -: シンボリックリンク先のパスを評価。
 ##            /: ディレクトリのみ残す。
 path=(
+      ./bin(N-/)
+      /usr/local/bin(N-/)
 			/usr/texbin(N-/)
-      ~/.rvm/gems/ruby-2.1.0/bin(N-/)
+      ~/.rvm/gems/ruby-2.4.0/bin(N-/)
       ~/bin(N-/)
       ~/.node/bin(N-/)
       /usr/local/share/npm/bin(N-/)
@@ -17,7 +19,6 @@ path=(
       /opt/local/bin(N-/)
       /opt/local/sbin(N-/)
       /Applications/UpTeX.app/Contents/Resources/TEX/texbin
-      /usr/local/bin(N-/)
       /usr/bin(N-/)
       /bin(N-/)
       /usr/local/sbin(N-/)
@@ -83,3 +84,16 @@ cdf () {
 
 # export RUBYGEMS_GEMDEPS="-"
 # export GEM_HOME="vendor/bundle"
+
+GOPATH="$HOME/Code/go"
+
+export GOPATH
+
+alias ansible-praybook=ansible-playbook
+
+alias fw='fswatch -0 / | xargs -0 -n 1 /bin/echo d:'
+
+alias rsync='rsync --exclude-from=$HOME/.rsync-excludes'
+
+RUBYOPT="-W0"
+export RUBYOPT
