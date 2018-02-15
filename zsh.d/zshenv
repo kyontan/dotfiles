@@ -10,15 +10,13 @@ typeset -U path
 path=(
       ./bin(N-/)
       /usr/local/bin(N-/)
-			/usr/texbin(N-/)
-      ~/.rvm/gems/ruby-2.4.0/bin(N-/)
       ~/bin(N-/)
       ~/.node/bin(N-/)
+      ~/go/bin(N-/)
       /usr/local/share/npm/bin(N-/)
       /usr/X11R6/bin(N-/)
       /opt/local/bin(N-/)
       /opt/local/sbin(N-/)
-      /Applications/UpTeX.app/Contents/Resources/TEX/texbin
       /usr/bin(N-/)
       /bin(N-/)
       /usr/local/sbin(N-/)
@@ -78,9 +76,7 @@ cdf () {
   else
     echo 'No Finder window found' >&2
   fi
-}
 
-[[ -s "$HOME/bin/metasm" ]] && export RUBYLIB="$HOME/bin/metasm"
 
 # export RUBYGEMS_GEMDEPS="-"
 # export GEM_HOME="vendor/bundle"
@@ -97,3 +93,12 @@ alias rsync='rsync --exclude-from=$HOME/.rsync-excludes'
 
 RUBYOPT="-W0"
 export RUBYOPT
+
+PYTHONSTARTUP=~/.pythonrc
+export PYTHONSTARTUP
+
+EDITOR=nano
+export $EDITOR
+
+alias exi=exit
+

@@ -1,0 +1,6 @@
+*~
+.DS_Store
+.wercker
+vendor
+coverage
+failed_examples.txt

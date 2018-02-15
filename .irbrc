@@ -6,9 +6,9 @@ IRB.conf[:HISTORY_PATH] = File::expand_path("~/.irb.history")
 require "irb/completion"
 
 begin
-	require "pp"
-	require "awesome_print"
-	AwesomePrint.irb!
+  require "pp"
+  require "awesome_print"
+  AwesomePrint.irb!
 rescue LoadError
   # Missing goodies, bummer
 end

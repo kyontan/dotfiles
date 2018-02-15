@@ -18,7 +18,8 @@ stty -ixon
 #autoload -U colors
 #colors
 PROMPT='[%n@%m]# '
-RPROMPT='[%d]'
+# RPROMPT='[%d]'
+RPROMPT=''
 
 # completion
 autoload -U compinit
@@ -88,7 +89,6 @@ alias bsc="browser-sync start --server --config bs-config.js"
 # Fix for tmux
 # brew install reattach-to-user-namespace
 alias subl='reattach-to-user-namespace subl'
-alias stree='reattach-to-user-namespace stree'
 alias open='reattach-to-user-namespace open'
 alias vim='reattach-to-user-namespace vim'
 alias pbcopy='reattach-to-user-namespace pbcopy'
@@ -97,35 +97,34 @@ GOPATH=(~/Code/go)
 
 # colordiff
 if [[ -x `which colordiff` ]]; then
-	alias diff='colordiff -u'
+  alias diff='colordiff -u'
 else
-	alias diff='diff -u'
+  alias diff='diff -u'
 fi
 
 source ~/.profile
 
 # peco find directory
-function peco-find() {
-  local current_buffer=$BUFFER
-  local search_root=""
-  local file_path=""
+function peco-find-file() {
+    if git rev-parse 2> /dev/null; then
+        source_files=$(git ls-files)
+    else
+        source_files=$(find . -type f)
+    fi
 
-  if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
-    search_root=`git rev-parse --show-toplevel`
-  else
-    search_root=`pwd`
-  fi
-  file_path="$(find ${search_root} -maxdepth 5 | peco)"
-  BUFFER="${current_buffer} ${file_path}"
-  CURSOR=$#BUFFER
-  zle clear-screen
+    selected_files=$(echo $source_files | peco --prompt "[find file]")
+    trimed=$(echo $selected_files | tr -d '\n')
+    if [ ! -z $trimed ]; then
+      BUFFER="${BUFFER}${trimed}"
+      CURSOR=$#BUFFER
+    fi
+    zle redisplay
 }
-zle -N peco-find
+
+zle -N peco-find-file
 
 # bind keys
-bindkey '^f' peco-find
-
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+bindkey '^f' peco-find-file
 
 # for zsh-completions
 fpath=($HOME/.zsh/completion $fpath)
@@ -138,3 +137,18 @@ function peco-history-selection() {
 
 zle -N peco-history-selection
 bindkey '^R' peco-history-selection
+
+function tmux-remake-socket () {
+    if [ ! $TMUX ]; then
+        return
+    fi
+    tmux_socket_file=`echo $TMUX|awk -F, '{print $1}'`
+    if [ ! -S $tmux_socket_file ]; then
+        mkdir -m700 `dirname $tmux_socket_file` 2> /dev/null
+        killall -SIGUSR1 tmux
+    else
+        echo tmux unix domain socket exists! nothing to do.
+    fi
+    unset tmux_socket_file
+}
+

@@ -29,3 +29,14 @@ end
 #   Bundler.require
 #   STDERR.puts Dir.pwd
 # end
+
+require "base64"
+require "json"
+
+Pry.commands.delete '.<shell command>'
+
+Pry.commands.block_command (/^\.$/), "Evaluate string of `pbpaste`", keep_retval: true do
+  string = `pbpaste`
+  puts Pry::Helpers::BaseHelpers.colorize_code(string)
+  target.eval string
+end
