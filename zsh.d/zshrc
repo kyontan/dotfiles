@@ -17,7 +17,7 @@ stty -ixon
 # prompt
 #autoload -U colors
 #colors
-PROMPT='[%n@%m]# '
+PROMPT='%n@%m # '
 # RPROMPT='[%d]'
 RPROMPT=''
 
@@ -50,13 +50,7 @@ alias l='ls -CF'
 alias cp='cp -i'
 alias mv='mv -i'
 alias vi='vim'
-alias -g G='| grep'
-alias -g L='| less'
-alias -g H='| head'
-alias -g T='| tail'
-alias -g S='| sort'
-alias -g W='| wc'
-alias -g X='| xargs'
+
 # alias tsp='tmux new-session \; split-window -h -d'
 # alias tvsp='tmux new-session \; split-window -d'
 
@@ -66,12 +60,12 @@ alias cc='/usr/bin/cc'
 
 alias nano='nano -k -w -i -S -T 2'
 
-alias huba="hub add -A && hub status"
-alias hubs="hub status"
-alias hubc="hub commit"
-alias hubp="hub push origin master"
-alias hubg="hub push gitlab master"
-alias hubl="hub log --oneline"
+# alias huba="hub add -A && hub status"
+# alias hubs="hub status"
+# alias hubc="hub commit"
+# alias hubp="hub push origin master"
+# alias hubg="hub push gitlab master"
+# alias hubl="hub log --oneline"
 
 alias javac='javac -J-Dfile.encoding=UTF-8'
 alias jar='jar -J-Dfile.encoding=UTF-8'
@@ -79,6 +73,7 @@ alias jar='jar -J-Dfile.encoding=UTF-8'
 alias cdc="cd ~/Code"
 alias cdd="cd ~/Downloads"
 alias cds="cd ~/Documents/School"
+alias cdg="cd ~/go/src"
 
 alias p="peco"
 

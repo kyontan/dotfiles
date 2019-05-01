@@ -22,6 +22,7 @@ path=(
       /usr/local/sbin(N-/)
       /usr/sbin(N-/)
       /sbin(N-/)
+      $path
       )
 typeset -xT SUDO_PATH sudo_path
 
@@ -82,9 +83,7 @@ cdf () {
 # export RUBYGEMS_GEMDEPS="-"
 # export GEM_HOME="vendor/bundle"
 
-GOPATH="$HOME/Code/go"
-
-export GOPATH
+export GOPATH="$HOME/go"
 
 alias ansible-praybook=ansible-playbook
 
