@@ -97,51 +97,95 @@ fi
 
 source ~/.profile
 
-# peco find directory
-function peco-find-file() {
-    if git rev-parse 2> /dev/null; then
-        source_files=$(git ls-files)
+if which peco &> /dev/null; then
+  function peco-directories() {
+    if command -v fd >/dev/null 2>&1; then
+      local dir="$(command fd --type directory --hidden --no-ignore --exclude .git/ --color never | peco )"
     else
-        source_files=$(find . -type f)
+      local dir="$(
+        command find . \( -path '*/\.*' -o -fstype dev -o -fstype proc \) -type d -print 2> /dev/null \
+        | sed 1d \
+        | cut -b3- \
+        | awk '{a[length($0)" "NR]=$0}END{PROCINFO["sorted_in"]="@ind_num_asc"; for(i in a) print a[i]}' - \
+        | peco
+      )"
     fi
 
-    selected_files=$(echo $source_files | peco --prompt "[find file]")
-    trimed=$(echo $selected_files | tr -d '\n')
-    if [ ! -z $trimed ]; then
-      BUFFER="${BUFFER}${trimed}"
+    if [ -n "$dir" ]; then
+      dir=$(echo "$dir" | tr '\n' ' ') # | sed -e 's/[[:space:]]*$//')
+
+      local rbuf=$RBUFFER
+      BUFFER="${LBUFFER}${dir}"
       CURSOR=$#BUFFER
+      BUFFER="${BUFFER}${rbuf}"
     fi
-    zle redisplay
-}
+  }
 
-zle -N peco-find-file
-
-# bind keys
-bindkey '^f' peco-find-file
-
-# for zsh-completions
-fpath=($HOME/.zsh/completion $fpath)
-
-function peco-history-selection() {
-    BUFFER=`history -n 1 | tail -r  | awk '!a[$0]++' | peco`
-    CURSOR=$#BUFFER
-    zle reset-prompt
-}
-
-zle -N peco-history-selection
-bindkey '^R' peco-history-selection
-
-function tmux-remake-socket () {
-    if [ ! $TMUX ]; then
-        return
-    fi
-    tmux_socket_file=`echo $TMUX|awk -F, '{print $1}'`
-    if [ ! -S $tmux_socket_file ]; then
-        mkdir -m700 `dirname $tmux_socket_file` 2> /dev/null
-        killall -SIGUSR1 tmux
+  function peco-files() {
+    if command -v fd >/dev/null 2>&1; then
+      local file="$(command fd --type file --hidden --no-ignore --exclude .git/ --color never | peco)"
+    elif command -v rg >/dev/null 2>&1; then
+      local file="$(rg --glob "" --files --hidden --no-ignore-vcs --iglob !.git/ --color never | peco)"
     else
-        echo tmux unix domain socket exists! nothing to do.
+      local file="$(
+      command find . \( -path '*/\.*' -o -fstype dev -o -fstype proc \) -type f -print 2> /dev/null \
+        | sed 1d \
+        | cut -b3- \
+        | awk '{a[length($0)" "NR]=$0}END{PROCINFO["sorted_in"]="@ind_num_asc"; for(i in a) print a[i]}' - \
+        | peco
+      )"
     fi
-    unset tmux_socket_file
-}
+
+    if [ -n "$file" ]; then
+      file=$(echo "$file" | tr '\n' ' ') # | sed -e 's/[[:space:]]*$//')
+      local rbuf=$RBUFFER
+      BUFFER="${LBUFFER}${file}"
+      CURSOR=$#BUFFER
+      BUFFER="${BUFFER}${rbuf}"
+    fi
+  }
+
+  zle -N peco-directories
+  bindkey '^f^d' peco-directories
+  zle -N peco-files
+  bindkey '^f^f' peco-files
+
+  function peco-gopath-dir() {
+    local gosrc=${GOPATH:-$HOME/go}/src
+    if command -v fd >/dev/null 2>&1; then
+      local dir="$(command fd . --type directory --max-depth 3 --hidden --no-ignore --exclude .git/ --color never ${gosrc} | peco --initial-filter SmartCase)"
+    # elif command -v rg >/dev/null 2>&1; then
+    #   local file="$(rg --glob "" --files --hidden --no-ignore-vcs --iglob !.git/ --color never | peco)"
+    else
+      local dir="$(command find ${gosrc} -depth 3 -type d | peco --initial-filter SmartCase)"
+    fi
+
+    if [ -n "$dir" ]; then
+      dir=$(echo "$dir" | awk '{ print $1 }' | tr -d '\n' ) # take first one
+      pushd -q $dir
+    fi
+  }
+  zle -N peco-gopath-dir
+  bindkey '^f^g' peco-gopath-dir
+
+  function peco-git-checkout() {
+    if git rev-parse 2> /dev/null; then
+      git branch | grep -v -e '->' -e '*' | perl -pe 's/^\h+//g' | perl -pe 's#^remotes/origin/###' | perl -nle 'print if !$c{$_}++' | peco | xargs git checkout
+    fi
+  }
+
+  zle -N peco-git-checkout
+  bindkey '^f^b' peco-git-checkout
+
+  # Search shell history with peco: https://github.com/peco/peco
+  # Adapted from: https://github.com/mooz/percol#zsh-history-search
+  function peco_select_history() {
+    BUFFER=$(fc -l -n 1 | sort -r | uniq | peco --query "$LBUFFER")
+    CURSOR=$#BUFFER # move cursor
+    zle -R -c       # refresh
+  }
+
+  zle -N peco_select_history
+  bindkey '^R' peco_select_history
+fi
 
