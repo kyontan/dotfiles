@@ -76,6 +76,7 @@ cdf () {
   else
     echo 'No Finder window found' >&2
   fi
+}
 
 
 # export RUBYGEMS_GEMDEPS="-"
